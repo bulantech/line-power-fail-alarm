@@ -93,7 +93,6 @@ void setup() {
   //or use this for auto generated name ESP + ChipID
   //wifiManager.autoConnect();
 
-  
   //if you get here you have connected to the WiFi
   Serial.println("connected...yeey :)");
 }
@@ -103,6 +102,7 @@ void loop() {
     if(!state) {
       state = 1;
       digitalWrite(LED, 0); //on
+      Serial.println("POWER DOWN");    
       Line_Notify_Send("POWER DOWN");      
     }
     delay(1000);
@@ -110,10 +110,12 @@ void loop() {
     if(firstStart) {
       firstStart = 0;
       digitalWrite(LED, 0); //on
+      Serial.println("FIRST START");
       Line_Notify_Send("FIRST START");
     } else {
       state = 0;
       digitalWrite(LED, 0); //on
+      Serial.println("POWER UP");
       Line_Notify_Send("POWER UP");
     }    
   }
