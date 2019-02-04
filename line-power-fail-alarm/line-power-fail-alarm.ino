@@ -16,6 +16,9 @@ int firstStart = 1;
 // Line config
 #define LINE_TOKEN "ez4tu8UFv2Yw7ELVCeyrfSfFqOYTUlb6QqTfZJotMp3"
 
+String powerDown = "%E0%B8%95%E0%B8%AD%E0%B8%99%E0%B8%99%E0%B8%B5%E0%B9%89%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%88%E0%B8%99%E0%B9%84%E0%B8%9F%E0%B8%9F%E0%B9%89%E0%B8%B2%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%881%20%E0%B9%84%E0%B8%9F%E0%B8%9F%E0%B9%89%E0%B8%B2%E0%B8%94%E0%B8%B1%E0%B8%9A%E0%B8%AD%E0%B8%A2%E0%B8%B9%E0%B9%88";
+String powerUp = "%E0%B8%95%E0%B8%AD%E0%B8%99%E0%B8%99%E0%B8%B5%E0%B9%89%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%88%E0%B8%99%E0%B9%84%E0%B8%9F%E0%B8%9F%E0%B9%89%E0%B8%B2%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%881%20%E0%B9%84%E0%B8%9F%E0%B8%9F%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B2%E0%B8%9B%E0%B8%81%E0%B8%95%E0%B8%B4%E0%B9%81%E0%B8%A5%E0%B9%89%E0%B8%A7";
+
 void Line_Notify_Send(String msg) {
   digitalWrite(LED, 0); //on
 //  return; //test
@@ -109,19 +112,19 @@ void loop() {
       state = 1;
       digitalWrite(LED, 0); //on
       Serial.println("POWER DOWN");    
-      Line_Notify_Send("POWER DOWN");      
+      Line_Notify_Send(powerDown);      
     }
     delay(5000);
   } else { //power up
     if(firstStart) {
       firstStart = 0;      
-      Serial.println("FIRST START");
-      Line_Notify_Send("FIRST START");
+      Serial.println("Smart Detector Start");
+      Line_Notify_Send("Smart Detector Start");
     } else {
       if(state) {
         state = 0;
         Serial.println("POWER UP");
-        Line_Notify_Send("POWER UP");
+        Line_Notify_Send(powerUp);
       }      
     } 
     delay(2000);   
