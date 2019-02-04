@@ -6,7 +6,7 @@
 #include <WiFiManager.h>         //https://github.com/tzapu/WiFiManager
 
 #define SW_DET  D6
-#define SW_PIN  D8
+#define SW_PIN  D5
 #define LED D7
 
 int state = 0; 
@@ -17,7 +17,9 @@ int firstStart = 1;
 #define LINE_TOKEN "ez4tu8UFv2Yw7ELVCeyrfSfFqOYTUlb6QqTfZJotMp3"
 
 void Line_Notify_Send(String msg) {
-  WiFiClientSecure client;
+  digitalWrite(LED, 0); //on
+//  return; //test
+  WiFiClientSecure client; 
 
   if (!client.connect("notify-api.line.me", 443)) {
     Serial.println("connection failed");
@@ -48,6 +50,7 @@ void Line_Notify_Send(String msg) {
     Serial.println(line);
   }
   Serial.println("-------------");
+  digitalWrite(LED, 1); //off
 }
 
 void ledBlink() {
@@ -79,6 +82,7 @@ void setup() {
   {
     Serial.println();
     Serial.println("Reset wifi config");
+    digitalWrite(LED, 0); //on
     wifiManager.resetSettings(); 
   }    
   
@@ -98,6 +102,8 @@ void setup() {
 }
 
 void loop() {
+  ledBlink();
+  
   if(!digitalRead(SW_DET)) { //power down
     if(!state) {
       state = 1;
@@ -105,21 +111,20 @@ void loop() {
       Serial.println("POWER DOWN");    
       Line_Notify_Send("POWER DOWN");      
     }
-    delay(1000);
+    delay(5000);
   } else { //power up
     if(firstStart) {
-      firstStart = 0;
-      digitalWrite(LED, 0); //on
+      firstStart = 0;      
       Serial.println("FIRST START");
       Line_Notify_Send("FIRST START");
     } else {
-      state = 0;
-      digitalWrite(LED, 0); //on
-      Serial.println("POWER UP");
-      Line_Notify_Send("POWER UP");
-    }    
-  }
+      if(state) {
+        state = 0;
+        Serial.println("POWER UP");
+        Line_Notify_Send("POWER UP");
+      }      
+    } 
+    delay(2000);   
+  }   
   
-  ledBlink();
-  delay(2000);
 }
