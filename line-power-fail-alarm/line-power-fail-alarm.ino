@@ -13,9 +13,18 @@ int state = 0;
 int stateCount = 0;
 int firstStart = 1;
 
+#define POWER_SEND_COUNT  3 //ต้องการให้แจ้งเตือน 3 ครั้ง
+#define POWER_SEND_TIME   60 //ห่างกัน 60 วินาที
+
+int powerUpSendCount = POWER_SEND_COUNT; 
+int powerUpSendTime = POWER_SEND_TIME; 
+int powerDownSendCount = POWER_SEND_COUNT; 
+int powerDownSendTime = POWER_SEND_TIME; 
+
 // Line config
 #define LINE_TOKEN "ez4tu8UFv2Yw7ELVCeyrfSfFqOYTUlb6QqTfZJotMp3"
 
+// https://meyerweb.com/eric/tools/dencoder/
 String powerDown = "%E0%B8%95%E0%B8%AD%E0%B8%99%E0%B8%99%E0%B8%B5%E0%B9%89%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%88%E0%B8%99%E0%B9%84%E0%B8%9F%E0%B8%9F%E0%B9%89%E0%B8%B2%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%881%20%E0%B9%84%E0%B8%9F%E0%B8%9F%E0%B9%89%E0%B8%B2%E0%B8%94%E0%B8%B1%E0%B8%9A%E0%B8%AD%E0%B8%A2%E0%B8%B9%E0%B9%88";
 String powerUp = "%E0%B8%95%E0%B8%AD%E0%B8%99%E0%B8%99%E0%B8%B5%E0%B9%89%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%88%E0%B8%99%E0%B9%84%E0%B8%9F%E0%B8%9F%E0%B9%89%E0%B8%B2%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%881%20%E0%B9%84%E0%B8%9F%E0%B8%9F%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B2%E0%B8%9B%E0%B8%81%E0%B8%95%E0%B8%B4%E0%B9%81%E0%B8%A5%E0%B9%89%E0%B8%A7";
 
@@ -106,13 +115,23 @@ void setup() {
 
 void loop() {
   ledBlink();
-  
+
   if(!digitalRead(SW_DET)) { //power down
-    if(!state) {
+    if(!state) { //แจ้งเตือนไฟดับครั้งแรก
       state = 1;
-      digitalWrite(LED, 0); //on
+      powerDownSendCount = POWER_SEND_COUNT; //กำหนดค่านับจำนวนกี่ครั้ง
+      powerDownSendTime = 1000*POWER_SEND_TIME; //กำหนดค่าเวลาในการส่ง
       Serial.println("POWER DOWN");    
       Line_Notify_Send(powerDown);      
+    } else {
+      powerDownSendTime -= 5000;
+      if(powerDownSendTime <= 0) {
+        powerDownSendTime = 1000*POWER_SEND_TIME;
+        if(--powerDownSendCount) {
+          Serial.println("POWER DOWN");    
+          Line_Notify_Send(powerDown);    
+        }
+      }
     }
     delay(5000);
   } else { //power up
@@ -121,11 +140,22 @@ void loop() {
       Serial.println("Smart Detector Start");
       Line_Notify_Send("Smart Detector Start");
     } else {
-      if(state) {
+      if(state) { //แจ้งเตือนไฟติดครั้งแรก
         state = 0;
+        powerUpSendCount = POWER_SEND_COUNT; //กำหนดค่านับจำนวนกี่ครั้ง
+        powerUpSendTime = 1000*POWER_SEND_TIME; //กำหนดค่าเวลาในการส่ง
         Serial.println("POWER UP");
         Line_Notify_Send(powerUp);
-      }      
+      } else {
+        powerUpSendTime -= 2000;
+        if(powerUpSendTime <= 0) {
+          powerUpSendTime = 1000*POWER_SEND_TIME;
+          if(--powerUpSendCount) {
+            Serial.println("POWER UP");
+            Line_Notify_Send(powerUp);    
+          }
+        }
+      }     
     } 
     delay(2000);   
   }   
