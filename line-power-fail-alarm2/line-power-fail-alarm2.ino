@@ -13,7 +13,8 @@ int state = 0;
 int stateCount = 0;
 int firstStart = 1;
 
-#define POWER_SEND_COUNT  3 //ต้องการให้แจ้งเตือน 3 ครั้ง
+#define POWER_UP_SEND_COUNT  3 //ต้องการให้แจ้งเตือน 3 ครั้ง
+#define POWER_DOWN_SEND_COUNT  5 //ต้องการให้แจ้งเตือน 3 ครั้ง
 #define POWER_SEND_TIME   60 //ห่างกัน 60 วินาที
 
 int powerUpSendCount = POWER_SEND_COUNT; 
@@ -119,7 +120,7 @@ void loop() {
   if(!digitalRead(SW_DET)) { //power down
     if(!state) { //แจ้งเตือนไฟดับครั้งแรก
       state = 1;
-      powerDownSendCount = POWER_SEND_COUNT; //กำหนดค่านับจำนวนกี่ครั้ง
+      powerDownSendCount = POWER_DOWN_SEND_COUNT; //กำหนดค่านับจำนวนกี่ครั้ง
       powerDownSendTime = 1000*POWER_SEND_TIME; //กำหนดค่าเวลาในการส่ง
       Serial.println("POWER DOWN");    
       Line_Notify_Send(powerDown);      
@@ -144,7 +145,7 @@ void loop() {
     } else {
       if(state) { //แจ้งเตือนไฟติดครั้งแรก
         state = 0;
-        powerUpSendCount = POWER_SEND_COUNT; //กำหนดค่านับจำนวนกี่ครั้ง
+        powerUpSendCount = POWER_UP_SEND_COUNT; //กำหนดค่านับจำนวนกี่ครั้ง
         powerUpSendTime = 1000*POWER_SEND_TIME; //กำหนดค่าเวลาในการส่ง
         Serial.println("POWER UP");
         Line_Notify_Send(powerUp);
