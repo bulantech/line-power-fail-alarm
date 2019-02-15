@@ -17,9 +17,9 @@ int firstStart = 1;
 #define POWER_DOWN_SEND_COUNT  5 //ต้องการให้แจ้งเตือน 3 ครั้ง
 #define POWER_SEND_TIME   60 //ห่างกัน 60 วินาที
 
-int powerUpSendCount = POWER_SEND_COUNT; 
+int powerUpSendCount = POWER_UP_SEND_COUNT; 
 int powerUpSendTime = POWER_SEND_TIME; 
-int powerDownSendCount = POWER_SEND_COUNT; 
+int powerDownSendCount = POWER_DOWN_SEND_COUNT; 
 int powerDownSendTime = POWER_SEND_TIME; 
 
 // Line config
